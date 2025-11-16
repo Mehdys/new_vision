@@ -12,6 +12,46 @@ type FeedbackRow = {
   created_at: string;
 };
 
+type FeedbackTag = "Bug" | "Feature" | "Praise" | "Other";
+
+function classifyFeedback(message: string): FeedbackTag {
+  const m = message.toLowerCase();
+
+  if (
+    m.includes("bug") ||
+    m.includes("error") ||
+    m.includes("doesn't work") ||
+    m.includes("doesnt work") ||
+    m.includes("crash") ||
+    m.includes("broken")
+  ) {
+    return "Bug";
+  }
+
+  if (
+    m.includes("would love") ||
+    m.includes("feature") ||
+    m.includes("could you add") ||
+    m.includes("add an option") ||
+    m.includes("it would be great if")
+  ) {
+    return "Feature";
+  }
+
+  if (
+    m.includes("love") ||
+    m.includes("great") ||
+    m.includes("exactly what we needed") ||
+    m.includes("super") ||
+    m.includes("amazing") ||
+    m.includes("smooth")
+  ) {
+    return "Praise";
+  }
+
+  return "Other";
+}
+
 export default function DashboardPage() {
   const [rows, setRows] = useState<FeedbackRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,13 +91,25 @@ export default function DashboardPage() {
     fetchFeedback();
   }, []);
 
-  // Get unique project IDs from data
+  // Unique project IDs
   const projectOptions = useMemo(() => {
     const set = new Set<string>();
     rows.forEach((row) => {
       if (row.project_id) set.add(row.project_id);
     });
     return Array.from(set);
+  }, [rows]);
+
+  // Tag stats
+  const tagStats = useMemo(() => {
+    return rows.reduce(
+      (acc, row) => {
+        const tag = classifyFeedback(row.message);
+        acc[tag] += 1;
+        return acc;
+      },
+      { Bug: 0, Feature: 0, Praise: 0, Other: 0 } as Record<FeedbackTag, number>
+    );
   }, [rows]);
 
   // Apply filters
@@ -98,7 +150,7 @@ export default function DashboardPage() {
             <p className="text-sm text-slate-400 mt-1">
               Explore all feedback captured by your{" "}
               <span className="font-semibold text-sky-400">NewVision</span>{" "}
-              widget, with filters by project and search.
+              widget, with filters and automatic tagging.
             </p>
           </div>
 
@@ -110,53 +162,74 @@ export default function DashboardPage() {
           </div>
         </header>
 
-        {/* Filters */}
-        <section className="rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
-            {/* Project filter */}
-            <div className="flex flex-col gap-1">
-              <span className="text-xs font-medium text-slate-400 uppercase tracking-wide">
-                Project
-              </span>
-              <select
-                value={selectedProject}
-                onChange={(e) => setSelectedProject(e.target.value)}
-                className="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500"
-              >
-                <option value="all">All projects</option>
-                {projectOptions.map((projectId) => (
-                  <option key={projectId} value={projectId}>
-                    {projectId}
-                  </option>
-                ))}
-              </select>
+        {/* Filters + Tag summary */}
+        <section className="rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3 flex flex-col gap-4">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between md:gap-4">
+            {/* Project filter + summary */}
+            <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
+              <div className="flex flex-col gap-1">
+                <span className="text-xs font-medium text-slate-400 uppercase tracking-wide">
+                  Project
+                </span>
+                <select
+                  value={selectedProject}
+                  onChange={(e) => setSelectedProject(e.target.value)}
+                  className="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                >
+                  <option value="all">All projects</option>
+                  {projectOptions.map((projectId) => (
+                    <option key={projectId} value={projectId}>
+                      {projectId}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="text-xs text-slate-400">
+                Total:{" "}
+                <span className="font-semibold text-slate-100">
+                  {rows.length}
+                </span>{" "}
+                entr{rows.length === 1 ? "y" : "ies"} · Showing{" "}
+                <span className="font-semibold text-slate-100">
+                  {filteredRows.length}
+                </span>
+              </div>
             </div>
 
-            {/* Summary */}
-            <div className="text-xs text-slate-400">
-              Total:{" "}
-              <span className="font-semibold text-slate-100">
-                {rows.length}
-              </span>{" "}
-              entr{rows.length === 1 ? "y" : "ies"} · Showing{" "}
-              <span className="font-semibold text-slate-100">
-                {filteredRows.length}
-              </span>
+            {/* Search */}
+            <div className="flex-1 max-w-sm">
+              <label className="block text-xs font-medium text-slate-400 mb-1">
+                Search (name, email, message, project)
+              </label>
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Type to filter feedback..."
+                className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
+              />
             </div>
           </div>
 
-          {/* Search */}
-          <div className="flex-1 max-w-sm">
-            <label className="block text-xs font-medium text-slate-400 mb-1">
-              Search (name, email, message, project)
-            </label>
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Type to filter feedback..."
-              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
-            />
+          {/* Tag summary chips */}
+          <div className="flex flex-wrap gap-2 text-[11px] text-slate-300">
+            <span className="inline-flex items-center gap-1 rounded-full border border-slate-700 bg-slate-950 px-2 py-1">
+              🐞 Bug reports:{" "}
+              <span className="font-semibold">{tagStats.Bug}</span>
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-full border border-slate-700 bg-slate-950 px-2 py-1">
+              💡 Feature requests:{" "}
+              <span className="font-semibold">{tagStats.Feature}</span>
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-full border border-slate-700 bg-slate-950 px-2 py-1">
+              💙 Praise:{" "}
+              <span className="font-semibold">{tagStats.Praise}</span>
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-full border border-slate-700 bg-slate-950 px-2 py-1">
+              📝 Other:{" "}
+              <span className="font-semibold">{tagStats.Other}</span>
+            </span>
           </div>
         </section>
 
@@ -192,49 +265,59 @@ export default function DashboardPage() {
           </section>
         ) : (
           <section className="space-y-3">
-            {filteredRows.map((row) => (
-              <article
-                key={row.id}
-                className="group rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-4 md:px-5 md:py-5 shadow-sm hover:border-sky-500/60 hover:shadow-md hover:shadow-sky-500/10 transition-all"
-              >
-                {/* Top row: name + date */}
-                <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between mb-2">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <p className="font-semibold text-sm md:text-base">
-                        {row.name || "Anonymous"}
-                      </p>
-                      <span className="inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 text-[10px] font-medium text-slate-300">
-                        {row.email ? "User" : "Guest"}
+            {filteredRows.map((row) => {
+              const tag = classifyFeedback(row.message);
+
+              return (
+                <article
+                  key={row.id}
+                  className="group rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-4 md:px-5 md:py-5 shadow-sm hover:border-sky-500/60 hover:shadow-md hover:shadow-sky-500/10 transition-all"
+                >
+                  {/* Top row: name + date */}
+                  <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between mb-2">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <p className="font-semibold text-sm md:text-base">
+                          {row.name || "Anonymous"}
+                        </p>
+                        <span className="inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 text-[10px] font-medium text-slate-300">
+                          {row.email ? "User" : "Guest"}
+                        </span>
+                      </div>
+                      {row.email && (
+                        <a
+                          href={`mailto:${row.email}`}
+                          className="block text-xs text-slate-400 hover:text-sky-400 transition-colors"
+                        >
+                          {row.email}
+                        </a>
+                      )}
+                    </div>
+
+                    <div className="flex flex-col items-start md:items-end gap-1">
+                      <span className="text-[11px] text-slate-500">
+                        {new Date(row.created_at).toLocaleString()}
+                      </span>
+                      <span className="inline-flex items-center gap-1 rounded-full border border-slate-700 bg-slate-950 px-2 py-0.5 text-[10px] font-mono text-slate-300">
+                        <span className="h-1.5 w-1.5 rounded-full bg-sky-400" />
+                        {row.project_id || "default_project"}
+                      </span>
+                      <span className="inline-flex items-center gap-1 rounded-full bg-slate-800 px-2 py-0.5 text-[10px] font-medium text-slate-100">
+                        {tag === "Bug" && "🐞 Bug"}
+                        {tag === "Feature" && "💡 Feature request"}
+                        {tag === "Praise" && "💙 Praise"}
+                        {tag === "Other" && "📝 Feedback"}
                       </span>
                     </div>
-                    {row.email && (
-                      <a
-                        href={`mailto:${row.email}`}
-                        className="block text-xs text-slate-400 hover:text-sky-400 transition-colors"
-                      >
-                        {row.email}
-                      </a>
-                    )}
                   </div>
 
-                  <div className="flex flex-col items-start md:items-end gap-1">
-                    <span className="text-[11px] text-slate-500">
-                      {new Date(row.created_at).toLocaleString()}
-                    </span>
-                    <span className="inline-flex items-center gap-1 rounded-full border border-slate-700 bg-slate-950 px-2 py-0.5 text-[10px] font-mono text-slate-300">
-                      <span className="h-1.5 w-1.5 rounded-full bg-sky-400" />
-                      {row.project_id || "default_project"}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Message */}
-                <p className="mt-1 text-sm leading-relaxed text-slate-100 whitespace-pre-wrap">
-                  {row.message}
-                </p>
-              </article>
-            ))}
+                  {/* Message */}
+                  <p className="mt-1 text-sm leading-relaxed text-slate-100 whitespace-pre-wrap">
+                    {row.message}
+                  </p>
+                </article>
+              );
+            })}
           </section>
         )}
       </div>
