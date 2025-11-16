@@ -177,7 +177,7 @@ This project follows a structured learning roadmap:
 
 ## 🌐 Live Demo
 
-- **Production URL**: [https://newvision-k04ileu2w-mehdigrs-projects-89e94f9c.vercel.app](https://newvision-k04ileu2w-mehdigrs-projects-89e94f9c.vercel.app)
+- **Production URL**: [https://newvision-exdxmoxyo-mehdigrs-projects-89e94f9c.vercel.app)
 - **GitHub Repository**: [https://github.com/Mehdys/new_vision](https://github.com/Mehdys/new_vision)
 
 ## 🚧 Roadmap
