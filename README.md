@@ -25,16 +25,19 @@ NewVision is a **production-ready full-stack application** that demonstrates mod
 ### Home Page
 ![Home Page](./docs/screenshots/home.png)
 
-### Feedback Form
-![Feedback Form](./docs/screenshots/feedback-form.png)
+![Home Page Alternative](./docs/screenshots/home2.png)
+
+### Live Demo Page
+![Demo Page](./docs/screenshots/Demo.png)
+
+### Developer Documentation
+![Documentation Page](./docs/screenshots/Dev.png)
 
 ### Dashboard
 ![Dashboard](./docs/screenshots/dashboard.png)
 
 ### Embed Widget in Action
 ![Embed Widget](./docs/screenshots/embed-widget.png)
-
-> **Note**: Add your screenshots to the `docs/screenshots/` folder and update the filenames above to match your images.
 
 ## 🌟 Project Potential
 
@@ -115,8 +118,8 @@ NewVision is a **production-ready full-stack application** that demonstrates mod
    - See `SUPABASE_BEGINNER_GUIDE.md` for detailed instructions
 
 5. **Run development server**
-   ```bash
-   npm run dev
+```bash
+npm run dev
    ```
 
 6. **Open your browser**
