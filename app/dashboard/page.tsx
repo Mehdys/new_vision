@@ -136,7 +136,7 @@ export default function DashboardPage() {
   }, [rows, selectedProject, searchTerm]);
 
   return (
-    <div className="min-h-screen px-4 py-10">
+    <div className="min-h-screen px-4 py-10 bg-gradient-to-br from-blue-50 via-white to-cyan-50">
       <div className="max-w-5xl mx-auto space-y-6">
         {/* Header */}
         <header className="space-y-2">

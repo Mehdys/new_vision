@@ -20,6 +20,22 @@ NewVision is a **production-ready full-stack application** that demonstrates mod
 - **🎨 Modern UI** - Tailwind CSS with responsive design
 - **🚀 Deployed** - Live on Vercel with GitHub integration
 
+## 📸 Screenshots
+
+### Home Page
+![Home Page](./docs/screenshots/home.png)
+
+### Feedback Form
+![Feedback Form](./docs/screenshots/feedback-form.png)
+
+### Dashboard
+![Dashboard](./docs/screenshots/dashboard.png)
+
+### Embed Widget in Action
+![Embed Widget](./docs/screenshots/embed-widget.png)
+
+> **Note**: Add your screenshots to the `docs/screenshots/` folder and update the filenames above to match your images.
+
 ## 🌟 Project Potential
 
 ### For Developers

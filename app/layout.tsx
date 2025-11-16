@@ -35,7 +35,19 @@ export default function RootLayout({
                 href="/"
                 className="text-blue-600 hover:text-cyan-600 font-medium transition-colors"
               >
-                Overview
+                Home
+              </Link>
+              <Link
+                href="/demo"
+                className="text-blue-600 hover:text-cyan-600 font-medium transition-colors"
+              >
+                Demo
+              </Link>
+              <Link
+                href="/docs"
+                className="text-blue-600 hover:text-cyan-600 font-medium transition-colors"
+              >
+                Docs
               </Link>
               <Link
                 href="/dashboard"
@@ -44,7 +56,7 @@ export default function RootLayout({
                 Dashboard
               </Link>
               <Link
-                href="/install"
+                href="/docs"
                 className="rounded-full border-2 border-blue-400 bg-gradient-to-r from-blue-500 to-cyan-600 px-4 py-1.5 text-xs font-bold text-white hover:from-blue-600 hover:to-cyan-700 transition-all shadow-md hover:shadow-lg"
               >
                 Get Started ✨

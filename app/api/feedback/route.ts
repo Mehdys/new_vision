@@ -4,13 +4,55 @@ import { isValidEmail } from "@/lib/utils";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*", // later: restrict to your domain
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
 };
 
 export async function OPTIONS() {
   // Handle CORS preflight
   return NextResponse.json({}, { status: 200, headers: corsHeaders });
+}
+
+export async function GET() {
+  try {
+    const { createClient } = await import("@supabase/supabase-js");
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !anonKey) {
+      return NextResponse.json(
+        { error: "Supabase not configured" },
+        { status: 500, headers: corsHeaders }
+      );
+    }
+
+    const supabaseClient = createClient(supabaseUrl, anonKey);
+
+    const { data, error } = await supabaseClient
+      .from("feedback")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(50);
+
+    if (error) {
+      console.error("Error fetching feedback:", error);
+      return NextResponse.json(
+        { error: error.message },
+        { status: 500, headers: corsHeaders }
+      );
+    }
+
+    return NextResponse.json(
+      { data: data || [] },
+      { status: 200, headers: corsHeaders }
+    );
+  } catch (error) {
+    console.error("Error in GET /api/feedback:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500, headers: corsHeaders }
+    );
+  }
 }
 
 export async function POST(req: Request) {

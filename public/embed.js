@@ -1,23 +1,38 @@
 (function () {
-    // Find the <script> tag that loaded this file
-    const currentScript = document.currentScript;
-  
-    if (!currentScript) {
-      console.warn("[NewVision] No currentScript found.");
-      return;
-    }
-  
-    // Read projectId from data-project-id attribute
-    const projectId = currentScript.getAttribute("data-project-id") || "default_project";
-  
-    // Create a container for the widget
-    const container = document.createElement("div");
-    container.id = "newvision-widget-root";
-    container.style.position = "fixed";
-    container.style.bottom = "20px";
-    container.style.right = "20px";
-    container.style.zIndex = "99999";
-    container.style.fontFamily = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+    // Wait for DOM to be ready
+    function initWidget() {
+      // Check if widget already exists
+      if (document.getElementById("newvision-widget-root")) {
+        console.log("[NewVision] Widget already exists, skipping initialization.");
+        return;
+      }
+
+      // Find the <script> tag that loaded this file
+      let currentScript = document.currentScript;
+      
+      // Fallback: if currentScript is not available (e.g., dynamically loaded),
+      // try to find the script tag by src attribute
+      if (!currentScript) {
+        const scripts = document.getElementsByTagName('script');
+        for (let i = scripts.length - 1; i >= 0; i--) {
+          if (scripts[i].src && scripts[i].src.includes('embed.js')) {
+            currentScript = scripts[i];
+            break;
+          }
+        }
+      }
+    
+      // Read projectId from data-project-id attribute
+      const projectId = (currentScript && currentScript.getAttribute("data-project-id")) || "default_project";
+    
+      // Create a container for the widget
+      const container = document.createElement("div");
+      container.id = "newvision-widget-root";
+      container.style.position = "fixed";
+      container.style.bottom = "20px";
+      container.style.right = "20px";
+      container.style.zIndex = "99999";
+      container.style.fontFamily = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
   
     // Button + hidden panel
     container.innerHTML = `
@@ -147,82 +162,120 @@
       </div>
     `;
   
-    document.body.appendChild(container);
-  
-    const toggleBtn = document.getElementById("newvision-toggle");
-    const panel = document.getElementById("newvision-panel");
-    const closeBtn = document.getElementById("newvision-close");
-    const form = document.getElementById("newvision-form");
-    const statusEl = document.getElementById("newvision-status");
-    const submitBtn = document.getElementById("newvision-submit");
-  
-    if (!toggleBtn || !panel || !closeBtn || !form || !statusEl || !submitBtn) {
-      console.warn("[NewVision] Some widget elements are missing.");
-      return;
-    }
-  
-    toggleBtn.addEventListener("click", () => {
-      panel.style.display = panel.style.display === "none" ? "block" : "none";
-    });
-  
-    closeBtn.addEventListener("click", () => {
-      panel.style.display = "none";
-    });
-  
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-  
-      const formData = new FormData(form);
-      const name = (formData.get("name") || "").toString();
-      const email = (formData.get("email") || "").toString();
-      const message = (formData.get("message") || "").toString();
-  
-      if (!name || !email || !message) {
-        statusEl.textContent = "Please fill in all fields.";
-        statusEl.style.color = "#fecaca";
+      // Wait for body to be available
+      if (!document.body) {
+        console.warn("[NewVision] document.body not ready, waiting...");
+        setTimeout(initWidget, 100);
         return;
       }
-  
-      submitBtn.setAttribute("disabled", "true");
-      submitBtn.textContent = "Sending...";
-      statusEl.textContent = "";
-      statusEl.style.color = "#9ca3af";
-  
-      const res = await fetch("/api/feedback", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          message,
-          projectId: projectId || "default_project",
-        }),
-      });
-      console.log("🔍 Response:", res);
-      try {
-        const data = await res.json().catch(() => null);
-  
-        if (!res.ok) {
-          console.error("[NewVision] Error response:", data);
-          statusEl.textContent =
-            (data && (data.error || data.details)) ||
-            "Something went wrong. Please try again.";
-          statusEl.style.color = "#fecaca";
-        } else {
-          statusEl.textContent = "Thank you! Your feedback has been sent ✅";
-          statusEl.style.color = "#bbf7d0";
-          form.reset();
+
+      document.body.appendChild(container);
+    
+      // Use setTimeout to ensure DOM is fully rendered
+      setTimeout(() => {
+        const toggleBtn = document.getElementById("newvision-toggle");
+        const panel = document.getElementById("newvision-panel");
+        const closeBtn = document.getElementById("newvision-close");
+        const form = document.getElementById("newvision-form");
+        const statusEl = document.getElementById("newvision-status");
+        const submitBtn = document.getElementById("newvision-submit");
+      
+        if (!toggleBtn || !panel || !closeBtn || !form || !statusEl || !submitBtn) {
+          console.error("[NewVision] Some widget elements are missing:", {
+            toggleBtn: !!toggleBtn,
+            panel: !!panel,
+            closeBtn: !!closeBtn,
+            form: !!form,
+            statusEl: !!statusEl,
+            submitBtn: !!submitBtn
+          });
+          return;
         }
-      } catch (err) {
-        console.error("[NewVision] Network error:", err);
-        statusEl.textContent = "Network error. Please try again.";
-        statusEl.style.color = "#fecaca";
-      } finally {
-        submitBtn.removeAttribute("disabled");
-        submitBtn.textContent = "Send feedback";
-      }
-    });
+      
+        toggleBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const isHidden = panel.style.display === "none" || !panel.style.display;
+          panel.style.display = isHidden ? "block" : "none";
+        });
+      
+        closeBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          panel.style.display = "none";
+        });
+      
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+    
+          const formData = new FormData(form);
+          const name = (formData.get("name") || "").toString();
+          const email = (formData.get("email") || "").toString();
+          const message = (formData.get("message") || "").toString();
+    
+          if (!name || !email || !message) {
+            statusEl.textContent = "Please fill in all fields.";
+            statusEl.style.color = "#fecaca";
+            return;
+          }
+    
+          submitBtn.setAttribute("disabled", "true");
+          submitBtn.textContent = "Sending...";
+          statusEl.textContent = "";
+          statusEl.style.color = "#9ca3af";
+    
+          try {
+            const res = await fetch("/api/feedback", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                name,
+                email,
+                message,
+                projectId: projectId || "default_project",
+              }),
+            });
+            
+            const data = await res.json().catch(() => null);
+      
+            if (!res.ok) {
+              console.error("[NewVision] Error response:", data);
+              statusEl.textContent =
+                (data && (data.error || data.details)) ||
+                "Something went wrong. Please try again.";
+              statusEl.style.color = "#fecaca";
+            } else {
+              statusEl.textContent = "Thank you! Your feedback has been sent ✅";
+              statusEl.style.color = "#bbf7d0";
+              form.reset();
+              // Auto-close after 2 seconds
+              setTimeout(() => {
+                panel.style.display = "none";
+              }, 2000);
+            }
+          } catch (err) {
+            console.error("[NewVision] Network error:", err);
+            statusEl.textContent = "Network error. Please try again.";
+            statusEl.style.color = "#fecaca";
+          } finally {
+            submitBtn.removeAttribute("disabled");
+            submitBtn.textContent = "Send feedback";
+          }
+        });
+
+        console.log("[NewVision] Widget initialized successfully!");
+      }, 50);
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initWidget);
+    } else {
+      // DOM is already ready
+      initWidget();
+    }
   })();
   
