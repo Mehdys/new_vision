@@ -91,7 +91,6 @@ export default function DashboardPage() {
     fetchFeedback();
   }, []);
 
-  // Unique project IDs
   const projectOptions = useMemo(() => {
     const set = new Set<string>();
     rows.forEach((row) => {
@@ -100,7 +99,6 @@ export default function DashboardPage() {
     return Array.from(set);
   }, [rows]);
 
-  // Tag stats
   const tagStats = useMemo(() => {
     return rows.reduce(
       (acc, row) => {
@@ -112,7 +110,6 @@ export default function DashboardPage() {
     );
   }, [rows]);
 
-  // Apply filters
   const filteredRows = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
 
@@ -139,42 +136,52 @@ export default function DashboardPage() {
   }, [rows, selectedProject, searchTerm]);
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50 px-4 py-10">
+    <div className="min-h-screen px-4 py-10">
       <div className="max-w-5xl mx-auto space-y-6">
         {/* Header */}
-        <header className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              Feedback Dashboard
-            </h1>
-            <p className="text-sm text-slate-400 mt-1">
-              Explore all feedback captured by your{" "}
-              <span className="font-semibold text-sky-400">NewVision</span>{" "}
-              widget, with filters and automatic tagging.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400">
-            <span className="inline-flex items-center gap-1 rounded-full border border-slate-700 px-3 py-1 bg-slate-900/60">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              Live data from Supabase
-            </span>
-          </div>
+        <header className="space-y-2">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+            Feedback Dashboard 📊
+          </h1>
+          <p className="text-base text-gray-700 max-w-xl">
+            This page shows how NewVision stores and displays feedback from your
+            widget. Filter by project, search messages, and see an automatic
+            breakdown of bugs, feature requests and praise.
+          </p>
         </header>
 
-        {/* Filters + Tag summary */}
-        <section className="rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3 flex flex-col gap-4">
-          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between md:gap-4">
-            {/* Project filter + summary */}
-            <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
+        {/* Summary cards */}
+        <section className="grid gap-4 md:grid-cols-4">
+          <div className="rounded-2xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-sky-50 px-5 py-4 shadow-lg">
+            <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide">Total feedback</p>
+            <p className="text-3xl font-bold mt-2 text-blue-600">{rows.length}</p>
+          </div>
+          <div className="rounded-2xl border-2 border-red-200 bg-gradient-to-br from-red-50 to-rose-50 px-5 py-4 shadow-lg">
+            <p className="text-xs font-semibold text-red-700 uppercase tracking-wide">🐞 Bugs</p>
+            <p className="text-3xl font-bold mt-2 text-red-600">{tagStats.Bug}</p>
+          </div>
+          <div className="rounded-2xl border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-yellow-50 px-5 py-4 shadow-lg">
+            <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide">💡 Features</p>
+            <p className="text-3xl font-bold mt-2 text-amber-600">{tagStats.Feature}</p>
+          </div>
+          <div className="rounded-2xl border-2 border-emerald-200 bg-gradient-to-br from-emerald-50 to-green-50 px-5 py-4 shadow-lg">
+            <p className="text-xs font-semibold text-emerald-700 uppercase tracking-wide">💙 Praise</p>
+            <p className="text-3xl font-bold mt-2 text-emerald-600">{tagStats.Praise}</p>
+          </div>
+        </section>
+
+        {/* Filters */}
+        <section className="rounded-2xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-cyan-50 px-5 py-4 flex flex-col gap-4 shadow-lg">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
               <div className="flex flex-col gap-1">
-                <span className="text-xs font-medium text-slate-400 uppercase tracking-wide">
+                <span className="text-xs font-bold text-blue-700 uppercase tracking-wide">
                   Project
                 </span>
                 <select
                   value={selectedProject}
                   onChange={(e) => setSelectedProject(e.target.value)}
-                  className="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="bg-white border-2 border-blue-300 rounded-lg px-4 py-2 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
                 >
                   <option value="all">All projects</option>
                   {projectOptions.map((projectId) => (
@@ -185,134 +192,121 @@ export default function DashboardPage() {
                 </select>
               </div>
 
-              <div className="text-xs text-slate-400">
-                Total:{" "}
-                <span className="font-semibold text-slate-100">
+              <div className="text-sm font-medium text-blue-700">
+                Showing{" "}
+                <span className="font-bold text-cyan-600">
+                  {filteredRows.length}
+                </span>{" "}
+                of{" "}
+                <span className="font-bold text-blue-600">
                   {rows.length}
                 </span>{" "}
-                entr{rows.length === 1 ? "y" : "ies"} · Showing{" "}
-                <span className="font-semibold text-slate-100">
-                  {filteredRows.length}
-                </span>
+                feedback entr{rows.length === 1 ? "y" : "ies"} ✨
               </div>
             </div>
 
-            {/* Search */}
             <div className="flex-1 max-w-sm">
-              <label className="block text-xs font-medium text-slate-400 mb-1">
-                Search (name, email, message, project)
+              <label className="block text-xs font-bold text-blue-700 mb-1 uppercase tracking-wide">
+                Search 🔍
               </label>
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Type to filter feedback..."
-                className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                className="w-full bg-white border-2 border-blue-300 rounded-lg px-4 py-2 text-sm font-medium text-gray-900 placeholder:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
               />
             </div>
-          </div>
-
-          {/* Tag summary chips */}
-          <div className="flex flex-wrap gap-2 text-[11px] text-slate-300">
-            <span className="inline-flex items-center gap-1 rounded-full border border-slate-700 bg-slate-950 px-2 py-1">
-              🐞 Bug reports:{" "}
-              <span className="font-semibold">{tagStats.Bug}</span>
-            </span>
-            <span className="inline-flex items-center gap-1 rounded-full border border-slate-700 bg-slate-950 px-2 py-1">
-              💡 Feature requests:{" "}
-              <span className="font-semibold">{tagStats.Feature}</span>
-            </span>
-            <span className="inline-flex items-center gap-1 rounded-full border border-slate-700 bg-slate-950 px-2 py-1">
-              💙 Praise:{" "}
-              <span className="font-semibold">{tagStats.Praise}</span>
-            </span>
-            <span className="inline-flex items-center gap-1 rounded-full border border-slate-700 bg-slate-950 px-2 py-1">
-              📝 Other:{" "}
-              <span className="font-semibold">{tagStats.Other}</span>
-            </span>
           </div>
         </section>
 
         {/* Content */}
         {loading ? (
-          <section className="mt-6">
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 px-6 py-10 text-center">
-              <p className="text-sm text-slate-300 mb-2">
-                Loading feedback…
-              </p>
-              <p className="text-xs text-slate-500">
-                Fetching data securely from Supabase.
+          <section className="mt-4">
+            <div className="rounded-2xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-cyan-50 px-8 py-10 text-center shadow-lg">
+              <p className="text-base font-semibold text-blue-700 mb-2">Loading feedback… ⏳</p>
+              <p className="text-sm text-blue-600">
+                Fetching data from Supabase.
               </p>
             </div>
           </section>
         ) : error ? (
-          <section className="mt-6">
-            <div className="rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-100">
-              {error}
+          <section className="mt-4">
+            <div className="rounded-2xl border-2 border-red-300 bg-gradient-to-br from-red-50 to-rose-50 px-5 py-4 text-sm font-medium text-red-800 shadow-lg">
+              ⚠️ {error}
             </div>
           </section>
         ) : filteredRows.length === 0 ? (
-          <section className="mt-6">
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 px-6 py-10 text-center">
-              <h2 className="text-lg font-semibold mb-2">
+          <section className="mt-4">
+            <div className="rounded-2xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-cyan-50 px-8 py-10 text-center shadow-lg">
+              <h2 className="text-lg font-bold text-blue-700 mb-2">
                 No feedback matches your filters 👀
               </h2>
-              <p className="text-sm text-slate-400">
-                Try clearing the search or selecting &quot;All projects&quot; to
-                see more results.
+              <p className="text-sm text-blue-600">
+                Try clearing the search or selecting &quot;All projects&quot;.
               </p>
             </div>
           </section>
         ) : (
-          <section className="space-y-3">
+          <section className="space-y-4">
             {filteredRows.map((row) => {
               const tag = classifyFeedback(row.message);
 
               return (
                 <article
                   key={row.id}
-                  className="group rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-4 md:px-5 md:py-5 shadow-sm hover:border-sky-500/60 hover:shadow-md hover:shadow-sky-500/10 transition-all"
+                  className="rounded-2xl border-2 border-blue-200 bg-white px-5 py-4 shadow-lg hover:shadow-xl hover:border-cyan-300 transition-all"
                 >
-                  {/* Top row: name + date */}
                   <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between mb-2">
                     <div>
                       <div className="flex items-center gap-2">
-                        <p className="font-semibold text-sm md:text-base">
+                        <p className="font-bold text-base text-gray-900">
                           {row.name || "Anonymous"}
                         </p>
-                        <span className="inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 text-[10px] font-medium text-slate-300">
-                          {row.email ? "User" : "Guest"}
+                        <span className="inline-flex items-center rounded-full bg-gradient-to-r from-blue-100 to-cyan-100 px-2.5 py-1 text-xs font-bold text-blue-700 border border-blue-300">
+                          {row.email ? "👤 User" : "👋 Guest"}
                         </span>
                       </div>
                       {row.email && (
                         <a
                           href={`mailto:${row.email}`}
-                          className="block text-xs text-slate-400 hover:text-sky-400 transition-colors"
+                          className="block text-xs text-blue-600 hover:text-cyan-600 font-medium transition-colors mt-1"
                         >
                           {row.email}
                         </a>
                       )}
                     </div>
 
-                    <div className="flex flex-col items-start md:items-end gap-1">
-                      <span className="text-[11px] text-slate-500">
+                    <div className="flex flex-col items-start md:items-end gap-2">
+                      <span className="text-xs font-medium text-blue-600">
                         {new Date(row.created_at).toLocaleString()}
                       </span>
-                      <span className="inline-flex items-center gap-1 rounded-full border border-slate-700 bg-slate-950 px-2 py-0.5 text-[10px] font-mono text-slate-300">
-                        <span className="h-1.5 w-1.5 rounded-full bg-sky-400" />
-                        {row.project_id || "default_project"}
-                      </span>
-                      <span className="inline-flex items-center gap-1 rounded-full bg-slate-800 px-2 py-0.5 text-[10px] font-medium text-slate-100">
-                        {tag === "Bug" && "🐞 Bug"}
-                        {tag === "Feature" && "💡 Feature request"}
-                        {tag === "Praise" && "💙 Praise"}
-                        {tag === "Other" && "📝 Feedback"}
-                      </span>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-blue-100 to-cyan-100 px-2.5 py-1 text-xs font-bold text-blue-700 border border-blue-300">
+                          🏷️ {row.project_id || "default_project"}
+                        </span>
+                        <span
+                          className={
+                            "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold border-2 " +
+                            (tag === "Bug"
+                              ? "bg-gradient-to-r from-red-100 to-rose-100 text-red-700 border-red-300"
+                              : tag === "Feature"
+                              ? "bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-700 border-amber-300"
+                              : tag === "Praise"
+                              ? "bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-700 border-emerald-300"
+                              : "bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-700 border-blue-300")
+                          }
+                        >
+                          {tag === "Bug" && "🐞 Bug"}
+                          {tag === "Feature" && "💡 Feature"}
+                          {tag === "Praise" && "💙 Praise"}
+                          {tag === "Other" && "📝 Feedback"}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Message */}
-                  <p className="mt-1 text-sm leading-relaxed text-slate-100 whitespace-pre-wrap">
+                  <p className="mt-3 text-sm leading-relaxed text-gray-800 whitespace-pre-wrap font-medium">
                     {row.message}
                   </p>
                 </article>
@@ -321,6 +315,6 @@ export default function DashboardPage() {
           </section>
         )}
       </div>
-    </main>
+    </div>
   );
 }

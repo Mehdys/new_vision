@@ -3,23 +3,23 @@ import Link from "next/link";
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50 px-4 py-12">
+    <main className="min-h-screen px-4 py-12">
       <div className="max-w-5xl mx-auto space-y-10">
         {/* Hero */}
         <section className="space-y-6">
-          <div className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/70 px-3 py-1 text-xs text-slate-300">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            Live: embeddable feedback widget powered by Next.js & Supabase
+          <div className="inline-flex items-center gap-2 rounded-full border-2 border-blue-300 bg-gradient-to-r from-blue-100 to-cyan-100 px-4 py-1.5 text-xs font-semibold text-blue-700 shadow-md">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            ✨ Live: Embeddable feedback widget powered by Next.js & Supabase
           </div>
 
           <div className="space-y-4">
-            <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">
+            <h1 className="text-5xl md:text-6xl font-bold tracking-tight bg-gradient-to-r from-blue-600 via-cyan-600 to-sky-600 bg-clip-text text-transparent">
               Capture user feedback{" "}
-              <span className="text-sky-400">from any website</span> in seconds.
+              <span className="block">from any website</span> in seconds! 🚀
             </h1>
-            <p className="text-sm md:text-base text-slate-400 max-w-xl">
+            <p className="text-base md:text-lg text-gray-700 max-w-2xl leading-relaxed">
               NewVision is a drop-in feedback widget. Add one{" "}
-              <code className="rounded bg-slate-900 px-1.5 py-0.5 text-[11px] text-sky-300">
+              <code className="rounded-md bg-blue-100 px-2 py-1 text-sm font-mono text-blue-700 border border-blue-300">
                 &lt;script&gt;
               </code>{" "}
               tag to your site, and feedback flows straight into your dashboard,
@@ -30,39 +30,42 @@ export default function HomePage() {
           <div className="flex flex-wrap items-center gap-3">
             <Link
               href="/dashboard"
-              className="inline-flex items-center justify-center rounded-full bg-sky-500 px-4 py-2 text-sm font-medium text-slate-950 shadow-lg shadow-sky-500/30 hover:bg-sky-400 transition-colors"
+              className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-cyan-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-blue-500/50 hover:shadow-xl hover:from-blue-600 hover:to-cyan-700 transition-all transform hover:scale-105"
             >
-              View feedback dashboard
+              View Dashboard 📊
             </Link>
             <Link
               href="/install"
-              className="inline-flex items-center justify-center rounded-full border border-slate-700 bg-slate-950 px-4 py-2 text-sm font-medium text-slate-200 hover:border-sky-500 hover:text-sky-300 transition-colors"
+              className="inline-flex items-center justify-center rounded-full border-2 border-blue-400 bg-white px-6 py-3 text-sm font-bold text-blue-600 hover:bg-blue-50 hover:border-blue-500 transition-all transform hover:scale-105 shadow-md"
             >
-              Get install snippet
+              Get Install Snippet ✨
             </Link>
           </div>
         </section>
 
         {/* How it works */}
         <section className="grid gap-6 md:grid-cols-3">
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
-            <h2 className="text-sm font-semibold mb-2">1. Embed</h2>
-            <p className="text-xs text-slate-400">
+          <div className="rounded-2xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-sky-50 p-6 shadow-lg hover:shadow-xl transition-shadow">
+            <div className="text-3xl mb-3">1️⃣</div>
+            <h2 className="text-lg font-bold text-blue-700 mb-2">Embed</h2>
+            <p className="text-sm text-gray-700">
               Paste a small script tag in your website. NewVision adds a floating
               feedback button automatically.
             </p>
           </div>
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
-            <h2 className="text-sm font-semibold mb-2">2. Collect</h2>
-            <p className="text-xs text-slate-400">
+          <div className="rounded-2xl border-2 border-cyan-200 bg-gradient-to-br from-cyan-50 to-sky-50 p-6 shadow-lg hover:shadow-xl transition-shadow">
+            <div className="text-3xl mb-3">2️⃣</div>
+            <h2 className="text-lg font-bold text-cyan-700 mb-2">Collect</h2>
+            <p className="text-sm text-gray-700">
               Visitors submit feedback. The widget calls your{" "}
-              <code className="text-[11px] text-sky-300">/api/feedback</code>{" "}
+              <code className="rounded bg-blue-100 px-1.5 py-0.5 text-[11px] text-blue-700 font-mono">/api/feedback</code>{" "}
               endpoint.
             </p>
           </div>
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
-            <h2 className="text-sm font-semibold mb-2">3. Analyze</h2>
-            <p className="text-xs text-slate-400">
+          <div className="rounded-2xl border-2 border-sky-200 bg-gradient-to-br from-sky-50 to-blue-50 p-6 shadow-lg hover:shadow-xl transition-shadow">
+            <div className="text-3xl mb-3">3️⃣</div>
+            <h2 className="text-lg font-bold text-sky-700 mb-2">Analyze</h2>
+            <p className="text-sm text-gray-700">
               All feedback is stored in Supabase and visible in your dashboard.
               Ready for future AI summarization and tagging.
             </p>
@@ -71,21 +74,21 @@ export default function HomePage() {
 
         {/* Code snippet preview */}
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold text-slate-200">
-            One-line install snippet
+          <h2 className="text-lg font-bold text-gray-800">
+            One-line install snippet 🎯
           </h2>
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 text-xs text-slate-200">
-            <pre className="overflow-x-auto">
-              <code>{`<script
+          <div className="rounded-2xl border-2 border-blue-300 bg-gradient-to-br from-blue-50 to-cyan-50 p-6 text-xs shadow-lg">
+            <pre className="overflow-x-auto text-gray-800">
+              <code className="font-mono">{`<script
   src="https://YOUR_DOMAIN/embed.js"
   data-project-id="default_project"
   async
 ></script>`}</code>
             </pre>
-            <p className="mt-3 text-[11px] text-slate-500">
-              Replace <span className="text-sky-300">YOUR_DOMAIN</span> with your
+            <p className="mt-4 text-sm text-gray-600">
+              Replace <span className="font-bold text-blue-600">YOUR_DOMAIN</span> with your
               Vercel URL. Each project can have its own{" "}
-              <span className="font-mono">project_id</span>.
+              <span className="font-mono bg-blue-100 px-1.5 py-0.5 rounded text-blue-700">project_id</span>.
             </p>
           </div>
         </section>

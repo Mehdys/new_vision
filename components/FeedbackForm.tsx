@@ -60,10 +60,10 @@ export default function FeedbackForm() {
   };  
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto space-y-4">
+    <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto space-y-5 p-6 rounded-2xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-cyan-50 shadow-xl">
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-          Name
+        <label htmlFor="name" className="block text-sm font-bold text-blue-700 mb-2">
+          Name ✨
         </label>
         <input
           type="text"
@@ -72,14 +72,14 @@ export default function FeedbackForm() {
           value={formData.name}
           onChange={handleChange}
           required
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+          className="w-full px-4 py-3 border-2 border-blue-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-medium text-gray-900 shadow-sm"
           placeholder="Your name"
         />
       </div>
 
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-          Email
+        <label htmlFor="email" className="block text-sm font-bold text-blue-700 mb-2">
+          Email 📧
         </label>
         <input
           type="email"
@@ -88,14 +88,14 @@ export default function FeedbackForm() {
           value={formData.email}
           onChange={handleChange}
           required
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+          className="w-full px-4 py-3 border-2 border-blue-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-medium text-gray-900 shadow-sm"
           placeholder="your.email@example.com"
         />
       </div>
 
       <div>
-        <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-          Message
+        <label htmlFor="message" className="block text-sm font-bold text-blue-700 mb-2">
+          Message 💬
         </label>
         <textarea
           id="message"
@@ -104,7 +104,7 @@ export default function FeedbackForm() {
           onChange={handleChange}
           required
           rows={4}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
+          className="w-full px-4 py-3 border-2 border-blue-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none font-medium text-gray-900 shadow-sm"
           placeholder="Your feedback..."
         />
       </div>
@@ -112,20 +112,20 @@ export default function FeedbackForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 text-white py-3 px-6 rounded-full font-bold shadow-lg hover:shadow-xl hover:from-blue-600 hover:to-cyan-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-105"
       >
-        {isSubmitting ? 'Submitting...' : 'Submit Feedback'}
+        {isSubmitting ? '⏳ Submitting...' : '🚀 Submit Feedback'}
       </button>
 
       {submitStatus === 'success' && (
-        <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-green-800 text-sm">
-          Thank you! Your feedback has been submitted.
+        <div className="p-4 bg-gradient-to-r from-emerald-50 to-green-50 border-2 border-emerald-300 rounded-xl text-emerald-800 text-sm font-bold shadow-lg">
+          ✅ Thank you! Your feedback has been submitted successfully!
         </div>
       )}
 
       {submitStatus === 'error' && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm">
-          {errorMessage || 'Something went wrong. Please try again.'}
+        <div className="p-4 bg-gradient-to-r from-red-50 to-rose-50 border-2 border-red-300 rounded-xl text-red-800 text-sm font-bold shadow-lg">
+          ⚠️ {errorMessage || 'Something went wrong. Please try again.'}
         </div>
       )}
     </form>
